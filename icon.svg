@@ -6,22 +6,47 @@
       <stop offset="100%" stop-color="#3b82f6" />
     </linearGradient>
     <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f2e7a" flood-opacity="0.3" />
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0f2e7a" flood-opacity="0.35" />
     </filter>
   </defs>
-  <!-- Background with rounded squircles -->
-  <rect width="512" height="512" rx="128" fill="url(#appIconGrad)" />
-  
-  <!-- Subtle inner shine -->
-  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.15" />
 
-  <!-- Official 'mh' Logo Mark -->
-  <g transform="translate(98, 120) scale(8.8)" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softShadow)">
-    {/* Lowercase 'm' */}
-    <path d="M4 22V11C4 8.5 5.8 7 8 7C10.2 7 12 8.5 12 11V22" />
-    <path d="M12 11C12 8.5 13.8 7 16 7C18.2 7 20 8.5 20 11V22" />
-    {/* Lowercase 'h' */}
-    <path d="M25 4V22" />
-    <path d="M25 11.5C25 8.8 26.8 7 29.2 7C31.5 7 33 8.8 33 11.5V22" />
+  <!-- App Icon Background Squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#appIconGrad)" />
+
+  <!-- Subtle Inner Border Highlight -->
+  <rect x="12" y="12" width="488" height="488" rx="116" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.2" />
+
+  <!-- Koala Mascot (Mobit) -->
+  <g transform="translate(256, 260) scale(2.4)" filter="url(#softShadow)">
+    <!-- Aura behind head -->
+    <circle cx="0" cy="0" r="72" fill="#ffffff" opacity="0.2" />
+
+    <!-- Left Ear -->
+    <circle cx="-50" cy="-38" r="32" fill="#8ca0ba" stroke="#0f172a" stroke-width="5" />
+    <circle cx="-48" cy="-38" r="20" fill="#fbcfe8" />
+    <path d="M-56 -44C-52 -42 -50 -36 -53 -32C-49 -33 -45 -38 -46 -43" fill="#ffffff" opacity="0.8" />
+
+    <!-- Right Ear -->
+    <circle cx="50" cy="-38" r="32" fill="#8ca0ba" stroke="#0f172a" stroke-width="5" />
+    <circle cx="48" cy="-38" r="20" fill="#fbcfe8" />
+    <path d="M56 -44C52 -42 50 -36 53 -32C49 -33 45 -38 46 -43" fill="#ffffff" opacity="0.8" />
+
+    <!-- Head -->
+    <ellipse cx="0" cy="-2" rx="55" ry="48" fill="#8ca0ba" stroke="#0f172a" stroke-width="5" />
+
+    <!-- Chubby Rosy Cheeks -->
+    <ellipse cx="-34" cy="14" rx="8.5" ry="6" fill="#fca5a5" opacity="0.85" />
+    <ellipse cx="34" cy="14" rx="8.5" ry="6" fill="#fca5a5" opacity="0.85" />
+
+    <!-- Joyful Eyes ^ ^ -->
+    <path d="M-28 -8C-24 -14 -16 -14 -12 -8" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" fill="none" />
+    <path d="M12 -8C16 -14 24 -14 28 -8" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" fill="none" />
+
+    <!-- Big Oval Koala Nose -->
+    <ellipse cx="0" cy="4" rx="12" ry="18" fill="#0f172a" />
+    <ellipse cx="-3.5" cy="-2" rx="4" ry="6" fill="#475569" opacity="0.6" />
+
+    <!-- Sweet Smile -->
+    <path d="M-6 25C-2 29 2 29 6 25" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" fill="none" />
   </g>
 </svg>

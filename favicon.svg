@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Koala Big Fluffy Ears -->
+  <circle cx="28" cy="42" r="24" fill="#8ca0ba" stroke="#1e293b" stroke-width="4"/>
+  <circle cx="30" cy="42" r="15" fill="#fbcfe8"/>
+  <circle cx="100" cy="42" r="24" fill="#8ca0ba" stroke="#1e293b" stroke-width="4"/>
+  <circle cx="98" cy="42" r="15" fill="#fbcfe8"/>
+
+  <!-- Koala Head -->
+  <ellipse cx="64" cy="68" rx="42" ry="38" fill="#8ca0ba" stroke="#1e293b" stroke-width="4"/>
+
+  <!-- Cheeks -->
+  <ellipse cx="38" cy="78" rx="7" ry="5" fill="#fca5a5" opacity="0.85"/>
+  <ellipse cx="90" cy="78" rx="7" ry="5" fill="#fca5a5" opacity="0.85"/>
+
+  <!-- Sparkling Eyes -->
+  <circle cx="48" cy="62" r="5" fill="#0f172a"/>
+  <circle cx="46.5" cy="60.5" r="1.8" fill="#ffffff"/>
+  <circle cx="80" cy="62" r="5" fill="#0f172a"/>
+  <circle cx="78.5" cy="60.5" r="1.8" fill="#ffffff"/>
+
+  <!-- Iconic Koala Oval Nose -->
+  <ellipse cx="64" cy="74" rx="10" ry="14" fill="#1e293b"/>
+  <ellipse cx="61.5" cy="69" rx="3.5" ry="5" fill="#475569" opacity="0.6"/>
+
+  <!-- Happy Smile -->
+  <path d="M59 90C62 93 66 93 69 90" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+</svg>
