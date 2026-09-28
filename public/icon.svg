@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="appIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="60%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0f2e7a" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <!-- Background with rounded squircles -->
+  <rect width="512" height="512" rx="128" fill="url(#appIconGrad)" />
+  
+  <!-- Subtle inner shine -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.15" />
+
+  <!-- Official 'mh' Logo Mark -->
+  <g transform="translate(98, 120) scale(8.8)" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#softShadow)">
+    {/* Lowercase 'm' */}
+    <path d="M4 22V11C4 8.5 5.8 7 8 7C10.2 7 12 8.5 12 11V22" />
+    <path d="M12 11C12 8.5 13.8 7 16 7C18.2 7 20 8.5 20 11V22" />
+    {/* Lowercase 'h' */}
+    <path d="M25 4V22" />
+    <path d="M25 11.5C25 8.8 26.8 7 29.2 7C31.5 7 33 8.8 33 11.5V22" />
+  </g>
+</svg>
