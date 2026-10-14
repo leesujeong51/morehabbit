@@ -1,9 +1,10 @@
-const CACHE_NAME = 'morehabbit-pwa-v2';
+const CACHE_NAME = 'morehabbit-pwa-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
+  './favicon.svg',
 ];
 
 // 1. Install Event: Cache app shell
