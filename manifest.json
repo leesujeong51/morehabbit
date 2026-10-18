@@ -1,25 +1,16 @@
 {
-  "short_name": "모어해빗",
-  "name": "모어해빗 (morehabbit) - 습관 & 뽀모도로 매니저",
+  "short_name": "MoreHabit",
+  "name": "MoreHabit - 습관 & 뽀모도로 매니저",
+  "description": "천천히, 하지만 확실하게. 나만의 습관 & 뽀모도로 매니저",
   "icons": [
-    {
-      "src": "./icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "192x192 512x512",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "512x512",
-      "purpose": "any maskable"
-    }
+    { "src": "./icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
+    { "src": "./icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+    { "src": "./icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
   ],
   "start_url": "./",
-
-  "background_color": "#f4f7fc",
-  "theme_color": "#1d4ed8",
+  "scope": "./",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "display": "standalone",
-  "orientation": "portrait",
-  "description": "더 나은 나를 만드는 습관 & 뽀모도로 매니저 - 모어해빗(morehabbit)"
+  "orientation": "portrait"
 }
