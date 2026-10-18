@@ -11,6 +11,8 @@ export interface Category {
   textDark: string;
 }
 
+export type RoutinePriority = 'high' | 'medium' | 'low';
+
 export interface Routine {
   id: string;
   title: string;
@@ -23,9 +25,28 @@ export interface Routine {
   targetCountPerWeek?: number; // e.g. 3 times a week
   archived?: boolean;
   createdAt: string; // ISO string
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD (선택 사항, 필수 아님)
+  priority?: RoutinePriority; // 'high' | 'medium' | 'low'
+  isPrivate?: boolean;
   order: number;
   xp?: number;
   tag?: string; // e.g. '500ml', '15분', '30p'
+}
+
+export interface UserProfile {
+  name: string;
+  hasCompletedOnboarding: boolean;
+  allowNotification: boolean;
+  avatarUrl?: string; // Custom uploaded image (Data URL)
+  avatarEmoji?: string; // E.g. '🐨', '🦁', '🌟', etc.
+  bio?: string; // "나만의 한 줄 다짐"
+  ageGroup?: string;
+  gender?: string;
+  routineCountGoal?: string;
+  focusArea?: string;
+  focusTimeOfDay?: string;
+  accountType?: 'guest' | 'linked';
 }
 
 export interface RoutineLog {
@@ -76,7 +97,7 @@ export interface RoutineTemplate {
   durationMinutes: number;
   xp: number;
   tag: string;
-  practitionerCount: number;
+  practitionerCount?: number;
   steps?: string[];
 }
 
@@ -106,7 +127,32 @@ export interface AchievementBadge {
   desc: string;
   icon: string;
   achieved: boolean;
+  unlockedAt?: string;
   progressPercent?: number;
 }
 
 export type SoundEffectType = 'rain' | 'birds' | 'cafe' | 'mute';
+
+// 할일 및 아이디어 창고 메모장 모델 (Request 2)
+export interface IdeaMemo {
+  id: string;
+  title: string;
+  content: string;
+  type: 'todo' | 'idea' | 'memo';
+  completed?: boolean;
+  tags?: string[];
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+  deletedAt?: string; // ISO string when moved to trash (7일 보관 후 영구 삭제)
+}
+
+// 운영자 문의 내역 게시판 모델 (Request 8)
+export interface CustomerInquiry {
+  id: string;
+  category: string;
+  subject: string;
+  body: string;
+  userEmail: string;
+  userName: string;
+  createdAt: string; // ISO string
+}

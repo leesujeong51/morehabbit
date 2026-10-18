@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import type { Routine, RoutineLog } from '../../types/routine';
-import { Modal } from '../common/Modal';
-
-import { Check, Trash2, MessageSquare } from 'lucide-react';
+import { Check, Trash2, MessageSquare, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../../utils/i18n';
+import { ConfirmModal } from '../common/ConfirmModal';
 
 interface RoutineMemoModalProps {
   isOpen: boolean;
@@ -23,13 +23,15 @@ export const RoutineMemoModal: React.FC<RoutineMemoModalProps> = ({
   onSaveMemo,
   onDeleteMemo,
 }) => {
+  const { t, language } = useLanguage();
   const [note, setNote] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     setNote(log?.note || '');
   }, [log, isOpen]);
 
-  if (!routine) return null;
+  if (!isOpen || !routine) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,71 +40,108 @@ export const RoutineMemoModal: React.FC<RoutineMemoModalProps> = ({
   };
 
   const handleDelete = () => {
-    onDeleteMemo(routine.id);
-    onClose();
+    setShowDeleteConfirm(true);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="루틴 실천 메모">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Routine brief info */}
-        <div className="flex items-center gap-3 bg-neutral-50 p-3 rounded-xl border border-neutral-100">
-          <span className="text-2xl">{routine.emoji}</span>
-          <div>
-            <h4 className="text-sm font-bold text-neutral-800">{routine.title}</h4>
-            <p className="text-xs text-neutral-400">{dateKey} 실천 기록</p>
+    /* Full-Page Native View (User Request: 앱 전체 모두 풀 페이지 형태로 팝업X) */
+    <div className="fixed inset-0 z-50 bg-[#f4f7fc] flex flex-col overflow-y-auto animate-fadeIn select-none">
+      {/* Sticky Top Header */}
+      <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-blue-100/80 px-4 py-3.5 shadow-2xs">
+        <div className="max-w-md mx-auto flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex items-center gap-1.5 text-slate-700 hover:text-blue-700 transition font-bold text-sm cursor-pointer"
+          >
+            <ArrowLeft size={18} />
+            <span>{t.common.back}</span>
+          </button>
+          <h2 className="text-base font-black text-[#0f2e7a]">
+            {t.today.memoTitle}
+          </h2>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="px-4 py-1.5 rounded-full bg-primary hover:bg-blue-700 text-white font-black text-xs shadow-xs cursor-pointer active:scale-95 transition"
+          >
+            {t.common.save}
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-md mx-auto p-5 flex flex-col gap-4">
+        {/* Routine Header Card */}
+        <div className="bg-white rounded-2xl p-4 border border-blue-100/90 shadow-2xs flex items-center gap-3.5">
+          <div className="w-13 h-13 rounded-2xl bg-blue-50/80 border border-blue-100 text-lg flex items-center justify-center shrink-0">
+            {routine.emoji || '✨'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+              {dateKey} {language === 'en' ? 'Log' : language === 'ja' ? '記録' : '실천 기록'}
+            </span>
+            <h3 className="text-base font-black text-slate-900 mt-1 truncate">
+              {routine.title}
+            </h3>
           </div>
         </div>
 
-        {/* Note textarea */}
-        <div>
-          <label className="block text-xs font-bold text-neutral-600 mb-1.5 flex items-center gap-1.5">
-            <MessageSquare size={13} className="text-emerald-600" />
-            <span>오늘의 한 줄 감상 및 메모</span>
+        {/* Note Writing Card */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-5 border border-blue-100/90 shadow-2xs flex flex-col gap-3">
+          <label className="block text-sm font-extrabold text-[#0f2e7a] flex items-center gap-1.5">
+            <MessageSquare size={16} className="text-primary" />
+            <span>{t.today.memoTitle}</span>
           </label>
+
           <textarea
-            rows={3}
+            rows={6}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="예: 오늘은 5km 달림! 날씨가 시원해서 상쾌했다."
-            className="w-full p-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm text-neutral-800 placeholder-neutral-400"
+            placeholder={t.today.memoPlaceholder}
+            className="w-full p-4 rounded-xl border border-slate-200/90 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600 text-sm font-medium text-slate-900 placeholder:text-slate-400 resize-none shadow-inner bg-slate-50/50"
             autoFocus
           />
-        </div>
 
-        {/* Buttons */}
-        <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-          {log?.note ? (
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1 p-1.5 rounded-lg hover:bg-rose-50 transition"
-            >
-              <Trash2 size={13} />
-              <span>메모 삭제</span>
-            </button>
-          ) : (
-            <div />
-          )}
+          <div className="flex items-center justify-between pt-2">
+            {log?.note ? (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="text-xs font-bold text-rose-500 hover:text-rose-700 flex items-center gap-1.5 p-2 rounded-xl hover:bg-rose-50 transition cursor-pointer"
+              >
+                <Trash2 size={15} />
+                <span>{t.common.delete}</span>
+              </button>
+            ) : (
+              <div />
+            )}
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-3.5 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl transition"
-            >
-              닫기
-            </button>
             <button
               type="submit"
-              className="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm transition active:scale-95 flex items-center gap-1"
+              className="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-extrabold text-sm rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer ml-auto"
             >
-              <Check size={14} />
-              <span>메모 저장</span>
+              <Check size={16} strokeWidth={3} />
+              <span>{t.common.save}</span>
             </button>
           </div>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </main>
+
+      {/* Routine Memo Safe Delete Dialog */}
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        title={t.confirm?.deleteMemoTitle || (language === 'en' ? 'Delete this note?' : language === 'ja' ? 'メモを削除しますか？' : '메모를 삭제할까요?')}
+        message={t.confirm?.deleteMemoMessage || (language === 'en' ? 'The habit reflection note will be deleted.' : language === 'ja' ? '作成した習慣メモが削除されます。' : '작성한 습관 메모가 삭제됩니다.')}
+        confirmLabel={t.common.delete}
+        cancelLabel={t.common.cancel}
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={() => {
+          onDeleteMemo(routine.id);
+          setShowDeleteConfirm(false);
+          onClose();
+        }}
+      />
+    </div>
   );
 };

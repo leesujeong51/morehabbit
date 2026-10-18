@@ -46,6 +46,10 @@ export const INITIAL_CATEGORIES: Category[] = [
 ];
 
 
+const thirtyDaysAgo = subDays(new Date(), 30);
+const thirtyDaysAgoStr = format(thirtyDaysAgo, 'yyyy-MM-dd');
+const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
+
 export const INITIAL_ROUTINES: Routine[] = [
   {
     id: 'rt-1',
@@ -55,8 +59,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     timeOfDay: 'morning',
     reminderTime: '07:00',
     repeatType: 'daily',
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'high',
+    isPrivate: false,
     order: 1,
+    xp: 40,
+    tag: '500ml',
   },
   {
     id: 'rt-2',
@@ -67,8 +76,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     reminderTime: '07:30',
     repeatType: 'weekly_days',
     repeatDays: [1, 2, 3, 4, 5], // Mon to Fri
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'medium',
+    isPrivate: false,
     order: 2,
+    xp: 40,
+    tag: '10분',
   },
   {
     id: 'rt-3',
@@ -78,8 +92,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     timeOfDay: 'afternoon',
     reminderTime: '13:00',
     repeatType: 'daily',
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'high',
+    isPrivate: false,
     order: 3,
+    xp: 40,
+    tag: '영양',
   },
   {
     id: 'rt-4',
@@ -89,8 +108,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     timeOfDay: 'evening',
     reminderTime: '20:30',
     repeatType: 'daily',
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'medium',
+    isPrivate: false,
     order: 4,
+    xp: 50,
+    tag: '20분',
   },
   {
     id: 'rt-5',
@@ -101,8 +125,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     reminderTime: '19:00',
     repeatType: 'weekly_count',
     targetCountPerWeek: 3,
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'medium',
+    isPrivate: false,
     order: 5,
+    xp: 60,
+    tag: '홈트',
   },
   {
     id: 'rt-6',
@@ -112,8 +141,13 @@ export const INITIAL_ROUTINES: Routine[] = [
     timeOfDay: 'night',
     reminderTime: '22:30',
     repeatType: 'daily',
-    createdAt: new Date().toISOString(),
+    startDate: thirtyDaysAgoStr,
+    createdAt: thirtyDaysAgoIso,
+    priority: 'low',
+    isPrivate: true,
     order: 6,
+    xp: 40,
+    tag: '5분',
   },
 ];
 
@@ -172,7 +206,7 @@ export const getInitialSampleLogs = (): { logs: RoutineLog[]; reviews: DailyRevi
     const notes = [
       '오늘 하루도 알차게 채워나간 느낌!',
       '퇴근 후 운동까지 마치니 뿌듯하다.',
-      '피곤했지만 루틴을 지켜서 마음이 편안함.',
+      '피곤했지만 습관을 지켜서 마음이 편안함.',
       '내일은 독서 시간을 조금 더 늘려봐야겠다.',
       '새로운 한 주 활기차게 시작!',
     ];

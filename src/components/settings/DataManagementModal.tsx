@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Modal } from '../common/Modal';
 import { exportDataAsJson, importDataFromJson, resetToSampleData } from '../../utils/storage';
 import { Download, Upload, RotateCcw, AlertTriangle, ShieldCheck, Check } from 'lucide-react';
+import { useLanguage } from '../../utils/i18n';
 
 interface DataManagementModalProps {
   isOpen: boolean;
@@ -14,8 +14,11 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
   onClose,
   onDataReload,
 }) => {
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  if (!isOpen) return null;
 
   const showStatus = (msg: string) => {
     setStatusMessage(msg);
@@ -24,7 +27,7 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
 
   const handleExport = () => {
     exportDataAsJson();
-    showStatus('데이터 백업 파일이 다운로드되었습니다.');
+    showStatus(t.dataModal.exportSuccess);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +39,7 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
       const content = event.target?.result as string;
       const success = importDataFromJson(content);
       if (success) {
-        showStatus('데이터가 성공적으로 복원되었습니다!');
+        showStatus(t.dataModal.importSuccess);
         onDataReload();
       } else {
         alert('올바르지 않은 JSON 파일 형식입니다.');
@@ -47,146 +50,162 @@ export const DataManagementModal: React.FC<DataManagementModalProps> = ({
   };
 
   const handleResetSample = () => {
-    if (confirm('샘플 루틴과 지난 기록으로 초기화하시겠습니까? 현재 데이터가 덮어씌워집니다.')) {
+    if (confirm(t.dataModal.confirmSample)) {
       resetToSampleData();
-      showStatus('샘플 데이터로 복원되었습니다.');
+      showStatus(t.dataModal.sampleSuccess);
       onDataReload();
     }
   };
 
   const handleClearAll = () => {
-    if (confirm('정말로 모든 루틴과 기록을 영구 삭제하시겠습니까?')) {
+    if (confirm(t.dataModal.confirmClear)) {
       localStorage.clear();
-      showStatus('모든 데이터가 초기화되었습니다.');
+      showStatus(t.dataModal.clearSuccess);
       onDataReload();
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="데이터 및 백업 설정">
-      <div className="space-y-4">
-        {/* Status notification */}
+    /* Full Page Layout (User Request 3: 팝업X 풀페이지 형태) */
+    <div className="fixed inset-0 z-50 bg-[#f4f7fc] flex flex-col overflow-y-auto select-none animate-fadeIn">
+      {/* Sticky Top Bar */}
+      <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-blue-100/80 px-4 py-3.5 shadow-2xs">
+        <div className="max-w-md mx-auto flex items-center justify-between">
+          <button
+            onClick={onClose}
+            className="flex items-center gap-1.5 text-slate-700 hover:text-blue-700 transition font-bold text-sm cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-[22px]">arrow_back</span>
+            <span>{t.common.back}</span>
+          </button>
+          <h2 className="text-base font-black text-[#0f2e7a]">
+            {t.dataModal.title}
+          </h2>
+          <div className="w-16"></div>
+        </div>
+      </header>
+
+      <main className="flex-1 w-full max-w-md mx-auto p-5 flex flex-col gap-4">
+        {/* Status notification toast */}
         {statusMessage && (
-          <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 animate-fadeIn">
-            <Check size={14} className="text-emerald-600" />
-            <span>{statusMessage}</span>
+          <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-bold flex items-center gap-2 animate-fadeIn">
+            <Check size={20} className="text-emerald-600 shrink-0" />
+            <span className="break-keep">{statusMessage}</span>
           </div>
         )}
 
-        {/* Local Storage Info Card */}
-        <div className="p-3.5 rounded-2xl bg-neutral-50 border border-neutral-200/80">
-          <div className="flex items-start gap-2.5">
-            <ShieldCheck size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-            <div className="text-xs text-neutral-600">
-              <strong className="text-neutral-800 block mb-0.5">
-                완전한 무료 & 개인정보 보호
-              </strong>
-              루틴 데이터는 외부 서버에 전송되지 않고 브라우저(LocalStorage)에 안전하게 저장됩니다.
-              기기를 변경하거나 백업할 땐 아래의 백업 다운로드를 이용하세요.
+        {/* Privacy & Security Note */}
+        <div className="p-4 rounded-2xl bg-white border border-blue-100/90 shadow-2xs flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+            <ShieldCheck size={22} />
+          </div>
+          <p className="text-xs font-semibold text-slate-700 leading-snug break-keep">
+            {t.dataModal.securityBadge}
+          </p>
+        </div>
+
+        {/* Action List */}
+        <div className="space-y-3">
+          {/* 1. Export JSON */}
+          <div className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50/80 transition-all shadow-2xs">
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-11 h-11 rounded-2xl bg-blue-50 text-primary border border-blue-200/60 flex items-center justify-center shrink-0">
+                <Download size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-slate-900 break-keep">
+                  {t.dataModal.exportTitle}
+                </h4>
+                <p className="text-xs text-slate-500 break-keep mt-0.5">
+                  {t.dataModal.exportDesc}
+                </p>
+              </div>
             </div>
+            <button
+              onClick={handleExport}
+              className="px-4 py-2 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs shrink-0 active:scale-95 transition shadow-xs cursor-pointer"
+            >
+              {t.dataModal.exportBtn}
+            </button>
+          </div>
+
+          {/* 2. Import JSON */}
+          <div className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50/80 transition-all shadow-2xs">
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-11 h-11 rounded-2xl bg-blue-50 text-primary border border-blue-200/60 flex items-center justify-center shrink-0">
+                <Upload size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-slate-900 break-keep">
+                  {t.dataModal.importTitle}
+                </h4>
+                <p className="text-xs text-slate-500 break-keep mt-0.5">
+                  {t.dataModal.importDesc}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs shrink-0 active:scale-95 transition shadow-xs cursor-pointer"
+            >
+              {t.dataModal.importBtn}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </div>
+
+          {/* 3. Sample Data */}
+          <div className="w-full flex items-center justify-between p-4 rounded-2xl border border-slate-200/90 bg-white hover:bg-slate-50/80 transition-all shadow-2xs">
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-11 h-11 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0">
+                <RotateCcw size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-slate-900 break-keep">
+                  {t.dataModal.sampleTitle}
+                </h4>
+                <p className="text-xs text-slate-500 break-keep mt-0.5">
+                  {t.dataModal.sampleDesc}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleResetSample}
+              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shrink-0 active:scale-95 transition shadow-xs cursor-pointer"
+            >
+              {t.dataModal.sampleBtn}
+            </button>
+          </div>
+
+          {/* 4. Reset All Data */}
+          <div className="w-full flex items-center justify-between p-4 rounded-2xl border border-rose-200 bg-rose-50/50 hover:bg-rose-50 transition-all shadow-2xs">
+            <div className="flex items-center gap-3 min-w-0 pr-2">
+              <div className="w-11 h-11 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                <AlertTriangle size={22} />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-base font-bold text-rose-900 break-keep">
+                  {t.dataModal.clearTitle}
+                </h4>
+                <p className="text-xs text-rose-700/80 break-keep mt-0.5">
+                  {t.dataModal.clearDesc}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleClearAll}
+              className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shrink-0 active:scale-95 transition shadow-xs cursor-pointer"
+            >
+              {t.dataModal.clearBtn}
+            </button>
           </div>
         </div>
-
-        {/* Action list */}
-        <div className="space-y-2">
-          {/* Mobile App Install Guide */}
-          <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 text-left">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-base">📱</span>
-              <h4 className="text-xs font-bold text-emerald-900">스마트폰 앱으로 설치하는 법</h4>
-            </div>
-            <p className="text-[11px] text-emerald-800/90 leading-relaxed">
-              브라우저 상단 우측 <strong>메뉴 (⋮ 또는 ≡)</strong>를 누른 뒤, <strong>[앱 설치]</strong> 또는 <strong>[홈 화면에 추가]</strong>를 누르시면 스마트폰 바탕화면에 정식 앱 아이콘이 바로 설치됩니다!
-            </p>
-          </div>
-
-          {/* Export JSON */}
-          <button
-            onClick={handleExport}
-            className="w-full flex items-center justify-between p-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition text-left"
-          >
-
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                <Download size={16} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-neutral-800">데이터 백업 (JSON 다운로드)</h4>
-                <p className="text-[11px] text-neutral-400">루틴, 실천 기록, 일기 전체를 백업합니다</p>
-              </div>
-            </div>
-            <span className="text-xs text-emerald-600 font-semibold">내보내기</span>
-          </button>
-
-          {/* Import JSON */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            accept=".json"
-            className="hidden"
-          />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full flex items-center justify-between p-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition text-left"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
-                <Upload size={16} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-neutral-800">데이터 복원 (JSON 파일 불러오기)</h4>
-                <p className="text-[11px] text-neutral-400">백업해둔 JSON 파일을 업로드하여 복원합니다</p>
-              </div>
-            </div>
-            <span className="text-xs text-indigo-600 font-semibold">불러오기</span>
-          </button>
-
-          {/* Reset to Sample */}
-          <button
-            onClick={handleResetSample}
-            className="w-full flex items-center justify-between p-3 rounded-xl border border-neutral-200 hover:bg-neutral-50 transition text-left"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                <RotateCcw size={16} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-neutral-800">샘플 데이터로 채우기</h4>
-                <p className="text-[11px] text-neutral-400">기본 추천 루틴과 5일치 샘플 기록을 불러옵니다</p>
-              </div>
-            </div>
-            <span className="text-xs text-amber-700 font-semibold">적용</span>
-          </button>
-
-          {/* Clear all */}
-          <button
-            onClick={handleClearAll}
-            className="w-full flex items-center justify-between p-3 rounded-xl border border-rose-100 hover:bg-rose-50/50 transition text-left"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
-                <AlertTriangle size={16} />
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-rose-600">전체 데이터 초기화</h4>
-                <p className="text-[11px] text-neutral-400">모든 루틴과 기록을 비우고 새로 시작합니다</p>
-              </div>
-            </div>
-            <span className="text-xs text-rose-600 font-semibold">초기화</span>
-          </button>
-        </div>
-
-        {/* Close Button */}
-        <div className="pt-2 border-t border-neutral-100 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-neutral-600 hover:bg-neutral-100 rounded-xl transition"
-          >
-            닫기
-          </button>
-        </div>
-      </div>
-    </Modal>
+      </main>
+    </div>
   );
 };

@@ -1,10 +1,11 @@
-import type { Routine, RoutineLog, DailyReview, Category, SleepLog } from '../types/routine';
+import type { Routine, RoutineLog, DailyReview, Category, SleepLog, UserProfile, CustomerInquiry } from '../types/routine';
 import {
   INITIAL_CATEGORIES,
   INITIAL_ROUTINES,
   getInitialSampleLogs,
   getInitialSampleSleepLogs,
 } from '../constants/initialData';
+import { toDateKey } from './dateUtils';
 
 const KEYS = {
   ROUTINES: 'myroutine_routines_v2',
@@ -12,6 +13,29 @@ const KEYS = {
   REVIEWS: 'myroutine_reviews_v2',
   CATEGORIES: 'myroutine_categories_v2',
   SLEEP: 'myroutine_sleep_v2',
+  PROFILE: 'myroutine_profile_v2',
+};
+
+export const DEFAULT_USER_PROFILE: UserProfile = {
+  name: '',
+  hasCompletedOnboarding: false,
+  allowNotification: true,
+};
+
+export const getStoredUserProfile = (): UserProfile => {
+  try {
+    const raw = localStorage.getItem(KEYS.PROFILE);
+    if (!raw) {
+      return DEFAULT_USER_PROFILE;
+    }
+    return { ...DEFAULT_USER_PROFILE, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_USER_PROFILE;
+  }
+};
+
+export const saveStoredUserProfile = (profile: UserProfile): void => {
+  localStorage.setItem(KEYS.PROFILE, JSON.stringify(profile));
 };
 
 export const getStoredCategories = (): Category[] => {
@@ -38,7 +62,13 @@ export const getStoredRoutines = (): Routine[] => {
       localStorage.setItem(KEYS.ROUTINES, JSON.stringify(INITIAL_ROUTINES));
       return INITIAL_ROUTINES;
     }
-    return JSON.parse(raw);
+    const parsed: Routine[] = JSON.parse(raw);
+    return parsed.map((r) => ({
+      ...r,
+      startDate: r.startDate || toDateKey(new Date(r.createdAt)),
+      priority: r.priority || 'medium',
+      isPrivate: Boolean(r.isPrivate),
+    }));
   } catch {
     return INITIAL_ROUTINES;
   }
@@ -52,9 +82,8 @@ export const getStoredLogs = (): RoutineLog[] => {
   try {
     const raw = localStorage.getItem(KEYS.LOGS);
     if (!raw) {
-      const { logs } = getInitialSampleLogs();
-      localStorage.setItem(KEYS.LOGS, JSON.stringify(logs));
-      return logs;
+      localStorage.setItem(KEYS.LOGS, JSON.stringify([]));
+      return [];
     }
     return JSON.parse(raw);
   } catch {
@@ -70,9 +99,8 @@ export const getStoredReviews = (): DailyReview[] => {
   try {
     const raw = localStorage.getItem(KEYS.REVIEWS);
     if (!raw) {
-      const { reviews } = getInitialSampleLogs();
-      localStorage.setItem(KEYS.REVIEWS, JSON.stringify(reviews));
-      return reviews;
+      localStorage.setItem(KEYS.REVIEWS, JSON.stringify([]));
+      return [];
     }
     return JSON.parse(raw);
   } catch {
@@ -161,3 +189,18 @@ export const resetToSampleData = (): void => {
   saveStoredReviews(reviews);
   saveStoredSleepLogs(sleep);
 };
+
+// Customer Inquiries Storage (User Request: 내가 남긴 문의 내역 저장 및 관리)
+export const getStoredInquiries = (): CustomerInquiry[] => {
+  try {
+    const raw = localStorage.getItem('morehabbit_inquiries_v2');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const saveStoredInquiries = (inquiries: CustomerInquiry[]): void => {
+  localStorage.setItem('morehabbit_inquiries_v2', JSON.stringify(inquiries));
+};
+

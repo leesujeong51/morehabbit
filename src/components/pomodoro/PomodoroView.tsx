@@ -13,7 +13,7 @@ export const PomodoroView: React.FC<PomodoroViewProps> = ({
   onCompleteRoutine,
 }) => {
   return (
-    <div className="flex flex-col w-full pb-10 select-none">
+    <div className="flex flex-col w-full pb-4 select-none">
       {/* Grand Pomodoro Studio with Enlarged Dial and Pomodoro Study Technique */}
       <PomodoroTimerCard
         onSessionComplete={() => {
